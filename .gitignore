@@ -1,3 +1,4 @@
+uro-kotlin\.gitignore
 # Compiled class file
 *.class
 
@@ -25,3 +26,41 @@ replay_pid*
 
 # Kotlin Gradle plugin data, see https://kotlinlang.org/docs/whatsnew20.html#new-directory-for-kotlin-data-in-gradle-projects
 .kotlin/
+
+# Gradle files
+.gradle/
+build/
+gradle-app.setting
+!gradle-wrapper.jar
+
+# IntelliJ IDEA files
+.idea/
+*.iml
+*.iws
+*.ipr
+*.iws
+out/
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Local configuration file
+local.properties
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# SQLite database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Application specific files
+database/
+logs/

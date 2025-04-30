@@ -21,7 +21,7 @@ class ClientEditorView : View("Client Editor") {
         }
         
         scrollpane {
-            fitToWidth = true
+            isFitToWidth = true
             
             form {
                 fieldset("Client Information") {

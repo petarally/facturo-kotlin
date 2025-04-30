@@ -13,6 +13,7 @@ import javafx.collections.FXCollections
 import javafx.geometry.Pos
 import javafx.scene.control.TableView
 import javafx.scene.layout.Priority
+import javafx.scene.text.FontWeight
 import tornadofx.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -35,7 +36,7 @@ class InvoiceEditorView : View("Invoice Editor") {
         }
         
         scrollpane {
-            fitToWidth = true
+            isFitToWidth = true
             vbox {
                 padding = insets(20)
                 spacing = 20.0
@@ -68,7 +69,7 @@ class InvoiceEditorView : View("Invoice Editor") {
                         field("Client") {
                             combobox<Client>(selectedClient) {
                                 items = clientController.clients
-                                cellFormat { text = it.name }
+                                cellFormat { client -> text = client.name }
                                 valueProperty().addListener { _, _, newValue ->
                                     if (newValue != null) {
                                         invoice.client = newValue
@@ -77,7 +78,7 @@ class InvoiceEditorView : View("Invoice Editor") {
                                 
                                 // Set initial selection if editing existing invoice
                                 if (invoice.client.id > 0) {
-                                    selectionModel.select(clientController.clients.find { it.id == invoice.client.id })
+                                    selectionModel.select(clientController.clients.find { client -> client.id == invoice.client.id })
                                 }
                                 
                                 addClass(FacturoStyles.formField)
@@ -90,12 +91,12 @@ class InvoiceEditorView : View("Invoice Editor") {
                             itemsTable = tableview(invoice.items) {
                                 readonlyColumn("Description", InvoiceItem::description)
                                 readonlyColumn("Quantity", InvoiceItem::quantity)
-                                readonlyColumn("Unit Price", InvoiceItem::unitPrice) { 
-                                    String.format("%.2f €", it.value) 
+                                readonlyColumn("Unit Price", InvoiceItem::unitPrice).cellFormat { 
+                                    text = String.format("%.2f €", it) 
                                 }
                                 readonlyColumn("Discount %", InvoiceItem::discount)
-                                readonlyColumn("Total", InvoiceItem::total) { 
-                                    String.format("%.2f €", it.value) 
+                                readonlyColumn("Total", InvoiceItem::total).cellFormat { 
+                                    text = String.format("%.2f €", it) 
                                 }
                                 
                                 contextmenu {
@@ -227,13 +228,13 @@ class InvoiceEditorView : View("Invoice Editor") {
                                     
                                     label("TOTAL:") {
                                         style {
-                                            fontWeight = FontWeight.BOLD
+                                            fontWeight = javafx.scene.text.FontWeight.BOLD
                                         }
                                     }
                                     region { hgrow = Priority.ALWAYS }
                                     label(invoice.total.toString()) {
                                         style {
-                                            fontWeight = FontWeight.BOLD
+                                            fontWeight = javafx.scene.text.FontWeight.BOLD
                                         }
                                         textProperty().bind(model.total.stringBinding {
                                             String.format("%.2f €", it)

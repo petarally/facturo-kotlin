@@ -2,6 +2,8 @@ package com.facturo.styles
 
 import javafx.scene.paint.Color
 import javafx.scene.text.FontWeight
+import javafx.geometry.Pos
+import javafx.scene.effect.DropShadow
 import tornadofx.*
 
 class FacturoStyles : Stylesheet() {
@@ -50,7 +52,11 @@ class FacturoStyles : Stylesheet() {
             spacing = 10.px
             backgroundColor += Color.WHITE
             borderRadius += box(5.px)
-            effect = DropShadowBuilder().color(Color.GRAY.deriveColor(0.0, 1.0, 1.0, 0.2)).build()
+            effect = DropShadow().apply {
+                color = Color.GRAY.deriveColor(0.0, 1.0, 1.0, 0.2)
+                radius = 10.0
+                spread = 0.0
+            }
         }
         
         button {

@@ -43,19 +43,26 @@ class InvoiceListView : View("Invoices") {
             vgrow = Priority.ALWAYS
             
             tableView = tableview(invoiceController.invoices) {
-                readonlyColumn("Invoice #", Invoice::invoiceNumber)
-                readonlyColumn("Client", Invoice::client) { it.value.name }
-                readonlyColumn("Date", Invoice::date) { 
-                    it.value.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) 
+                column("Invoice #", Invoice::invoiceNumber)
+                
+                column("Client", Invoice::client).cellFormat { client ->
+                    text = client.name
                 }
-                readonlyColumn("Due Date", Invoice::dueDate) { 
-                    it.value.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) 
+                
+                column("Date", Invoice::date).cellFormat { date ->
+                    text = date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
                 }
-                readonlyColumn("Total", Invoice::total) { 
-                    String.format("%.2f €", it.value) 
+                
+                column("Due Date", Invoice::dueDate).cellFormat { dueDate ->
+                    text = dueDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
                 }
-                readonlyColumn("Status", Invoice::paid) { 
-                    if (it.value) "Paid" else "Unpaid" 
+                
+                column("Total", Invoice::total).cellFormat { total ->
+                    text = String.format("%.2f €", total)
+                }
+                
+                column("Status", Invoice::paid).cellFormat { paid ->
+                    text = if (paid) "Paid" else "Unpaid"
                 }
                 
                 contextmenu {

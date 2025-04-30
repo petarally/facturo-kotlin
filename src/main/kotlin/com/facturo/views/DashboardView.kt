@@ -1,18 +1,21 @@
 package com.facturo.views
 
 import com.facturo.controllers.InvoiceController
+import com.facturo.models.Invoice
 import com.facturo.styles.FacturoStyles
 import javafx.geometry.Pos
 import javafx.scene.chart.CategoryAxis
 import javafx.scene.chart.NumberAxis
+import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
+import javafx.scene.text.FontWeight
 import tornadofx.*
 
 class DashboardView : View("Dashboard") {
     private val invoiceController: InvoiceController by inject()
     
     override val root = scrollpane {
-        fitToWidth = true
+        isFitToWidth = true
         vbox {
             spacing = 20.0
             padding = insets(20)
@@ -59,7 +62,7 @@ class DashboardView : View("Dashboard") {
                                 style { textFill = Color.GRAY }
                             }
                             
-                            label(invoiceController.invoices.count { it.paid }.toString()) {
+                            label(invoiceController.invoices.count { invoice -> invoice.paid }.toString()) {
                                 style {
                                     fontSize = 28.px
                                     fontWeight = FontWeight.BOLD
@@ -76,7 +79,7 @@ class DashboardView : View("Dashboard") {
                                 style { textFill = Color.GRAY }
                             }
                             
-                            label(invoiceController.invoices.count { !it.paid }.toString()) {
+                            label(invoiceController.invoices.count { invoice -> !invoice.paid }.toString()) {
                                 style {
                                     fontSize = 28.px
                                     fontWeight = FontWeight.BOLD
@@ -125,14 +128,22 @@ class DashboardView : View("Dashboard") {
                         addClass(FacturoStyles.subHeader)
                     }
                     
-                    tableview(invoiceController.invoices.sortedByDescending { it.date }.take(5).asObservable()) {
-                        readonlyColumn("Invoice #", Invoice::invoiceNumber)
-                        readonlyColumn("Client", Invoice::client) { it.value.name }
-                        readonlyColumn("Date", Invoice::date)
-                        readonlyColumn("Due Date", Invoice::dueDate)
-                        readonlyColumn("Total", Invoice::total) { it.value.toString() + " €" }
-                        readonlyColumn("Status", Invoice::paid) { 
-                            if (it.value) "Paid" else "Unpaid" 
+                    tableview<Invoice>(invoiceController.invoices.sortedByDescending { invoice -> invoice.date }.take(5).asObservable()) {
+                        column("Invoice #", Invoice::invoiceNumber)
+                        
+                        column("Client", Invoice::client).cellFormat {
+                            text = it.name
+                        }
+                        
+                        column("Date", Invoice::date)
+                        column("Due Date", Invoice::dueDate)
+                        
+                        column("Total", Invoice::total).cellFormat {
+                            text = "$it €"
+                        }
+                        
+                        column("Status", Invoice::paid).cellFormat {
+                            text = if (it) "Paid" else "Unpaid"
                         }
                         
                         prefHeight = 200.0
@@ -140,7 +151,7 @@ class DashboardView : View("Dashboard") {
                     
                     button("View All Invoices") {
                         style {
-                            marginTop = 10.px
+                            this.padding = box(10.px, 0.px, 0.px, 0.px)
                         }
                         action {
                             replaceWith<InvoiceListView>()

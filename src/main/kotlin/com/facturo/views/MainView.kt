@@ -2,16 +2,26 @@ package com.facturo.views
 
 import com.facturo.styles.FacturoStyles
 import javafx.geometry.Pos
+import javafx.scene.control.ScrollPane
+import javafx.scene.effect.DropShadow
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
+import javafx.scene.text.FontWeight
 import tornadofx.*
 
 class MainView : View("Facturo - Invoice Management") {
     override val root = borderpane {
+        setPrefSize(1200.0, 800.0)
+        
         left = vbox {
+            minWidth = 200.0
             style {
                 backgroundColor += Color.WHITE
-                effect = DropShadowBuilder().color(Color.GRAY.deriveColor(0.0, 1.0, 1.0, 0.2)).build()
+                effect = DropShadow().apply {
+                    color = Color.GRAY.deriveColor(0.0, 1.0, 1.0, 0.2)
+                    radius = 10.0
+                    spread = 0.0
+                }
             }
             
             vbox {
@@ -41,42 +51,47 @@ class MainView : View("Facturo - Invoice Management") {
                 padding = insets(10)
                 
                 button("Dashboard") {
+                    maxWidth = Double.MAX_VALUE
                     addClass(FacturoStyles.navButton)
                     graphic = label("🏠")
                     action {
-                        replaceWith<DashboardView>()
+                        replaceContent<DashboardView>()
                     }
                 }
                 
                 button("Invoices") {
+                    maxWidth = Double.MAX_VALUE
                     addClass(FacturoStyles.navButton)
                     graphic = label("📄")
                     action {
-                        replaceWith<InvoiceListView>()
+                        replaceContent<InvoiceListView>()
                     }
                 }
                 
                 button("Clients") {
+                    maxWidth = Double.MAX_VALUE
                     addClass(FacturoStyles.navButton)
                     graphic = label("👥")
                     action {
-                        replaceWith<ClientListView>()
+                        replaceContent<ClientListView>()
                     }
                 }
                 
                 button("Company Info") {
+                    maxWidth = Double.MAX_VALUE
                     addClass(FacturoStyles.navButton)
                     graphic = label("🏢")
                     action {
-                        replaceWith<CompanySettingsView>()
+                        replaceContent<CompanySettingsView>()
                     }
                 }
                 
                 button("Settings") {
+                    maxWidth = Double.MAX_VALUE
                     addClass(FacturoStyles.navButton)
                     graphic = label("⚙️")
                     action {
-                        replaceWith<SettingsView>()
+                        replaceContent<SettingsView>()
                     }
                 }
             }
@@ -88,7 +103,7 @@ class MainView : View("Facturo - Invoice Management") {
             separator()
             
             vbox {
-                padding = insets(20)
+                padding = insets(10)
                 alignment = Pos.CENTER
                 
                 label("Facturo v1.0") {
@@ -100,8 +115,22 @@ class MainView : View("Facturo - Invoice Management") {
             }
         }
         
-        center {
+        center = scrollpane {
+            isFitToWidth = true
+            isFitToHeight = true
+            hbarPolicy = ScrollPane.ScrollBarPolicy.NEVER
+            
             add<DashboardView>()
         }
+    }
+    
+    override fun onDock() {
+        primaryStage.minWidth = 1000.0
+        primaryStage.minHeight = 700.0
+    }
+    
+    private inline fun <reified T: UIComponent> replaceContent() {
+        val container = root.center as ScrollPane
+        container.content = find<T>().root
     }
 }
